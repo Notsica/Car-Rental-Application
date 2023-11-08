@@ -15,4 +15,10 @@
     <ProjectReference Include="..\Car Rent.Business\Car Rent.Business.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Content Update="wwwroot\css\mycss.css">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
 </Project>

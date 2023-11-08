@@ -1,6 +1,8 @@
 ﻿using Car_Rent.Common.Classes;
 using Car_Rent.Common.Interfaces;
 using Car_Rent.Data.Interfaces;
+using Car_Rent.Common.Extensions;
+using Car_Rent.Common.Enums;
 
 namespace Car_Rent.Business.Classes;
 
@@ -8,69 +10,61 @@ public class BookingProcessor
 {
     readonly IData _data;
     public BookingProcessor(IData data) => _data = data;
-    
-    public string? PersonSelect { get; set; }
-    public string InputRegNo { get; set; }
-    public string InputMake { get; set; }
-    public int? InputOdometer { get; set; }
-    public int? InputCostKm { get; set; } 
-    public string InputType { get; set; }
-    public int? InputKmRented { get; set; }
-    public string? InputFName { get; set; }
-    public string? InputLName { get; set; }
 
-    public List<IVehicle> GetVehicles() => _data.GetVehicles().GetRange(0, _data.GetVehicles().Count);
-    public List<IPerson> GetPersons() => _data.GetPersons();
-    public List<IBooking> GetBookings() => _data.GetBookings();
+    public InputVariables i = new InputVariables();
+    public UpdateVariables u = new UpdateVariables();
+
+    public List<Vehicle> GetVehicles() => _data.Get<Vehicle>();
+    public List<IPerson> GetPersons() => _data.Get<IPerson>();
+    public List<IBooking> GetBookings() => _data.Get<IBooking>();
 
     public void AddVehicle()
     {
-        if (InputType == "Motorcycle")
+        if (!string.IsNullOrEmpty(i.InputRegNo) &&
+            !string.IsNullOrEmpty(i.InputMake) &&
+            i.InputOdometer != null &&
+            i.InputCostKm != null &&
+            !string.IsNullOrEmpty(i.InputType))
         {
-            _data.GetVehicles().Add(new Car(InputRegNo, InputMake, (int)InputOdometer, (int)InputCostKm, InputType, 100, true));
-            return;
+            int TypeCost = (int)GetVehicleType(i.InputType);
+            Vehicle vehicle;
+
+            vehicle = i.InputType == "Motorcycle" ?
+                new Motorcycle(_data.NextVehicleId, i.InputRegNo, i.InputMake, (int)i.InputOdometer, (int)i.InputCostKm, i.InputType, TypeCost, false) :
+                new Car(_data.NextVehicleId, i.InputRegNo, i.InputMake, (int)i.InputOdometer, (int)i.InputCostKm, i.InputType, TypeCost, false);
+
+            (i.InputRegNo, i.InputMake, i.InputOdometer, i.InputCostKm, i.InputType) = (string.Empty, string.Empty, null, null, null);
+            _data.Add(vehicle);
         }
-        GetVehicles().Add(new Car(InputRegNo, InputMake, (int)InputOdometer, (int)InputCostKm, InputType, 100, false)); //test
-        _data.GetVehicles().Add(new Car(InputRegNo, InputMake, (int)InputOdometer, (int)InputCostKm, InputType, 100, false));
+        else { u.NullCheck = true; }
     }
-    public void AddPerson(string inputFName, string inputLName)
+    public void AddPerson()
     {
-        GetPersons().Add(new Customer(inputFName, inputLName, GetPersons().Last().UID + 1));
+        if (!string.IsNullOrEmpty(i.SSN) && !string.IsNullOrEmpty(i.FName) && !string.IsNullOrEmpty(i.LName))
+        {
+            var p = new Customer(i.SSN, i.FName, i.LName, _data.NextPersonId);
+            _data.Add<IPerson>(p);
+            (i.SSN, i.FName, i.LName) = (string.Empty, string.Empty, string.Empty);
+        }
+        else { u.NullCheck = true; }
     }
-    public void RentVehicle(string regNo, int odometer, double costKm,double costDay)
+    public async void RentVehicle(Vehicle vehicle)      
     {
-        GetBookings().Add(new Booking($"{regNo}", $"{PersonSelect}", odometer, odometer, costKm, DateOnly.FromDateTime(DateTime.Now),
-        DateOnly.FromDateTime(DateTime.Now), costDay, true));
-        _data.GetVehicles()[FindCar(regNo)].Booked = true;
-    }
-    public void ReturnVehicle(string vRegNo)
-    {
-        _data.GetBookings()[FindBooking(vRegNo)].KmReturned += (int)InputKmRented;
-        _data.GetBookings()[FindBooking(vRegNo)].Status = false;
-        _data.GetVehicles()[FindCar(vRegNo)].Odometer = (int)_data.GetBookings()[FindBooking(vRegNo)].KmReturned;
-        _data.GetVehicles()[FindCar(vRegNo)].Booked = false;
-    }
+        if (i.PersonSelect != 0)
+        {
+            _data.RentVehicle(vehicle.Id, i.PersonSelect);
+            i.PersonSelect = 0;
 
-    public double GetTotalCost(double kmRented, double kmReturned,double costKm ,DateOnly dateRented, double costDay)
-    {
-        DateTime startDate = dateRented.ToDateTime(TimeOnly.MinValue);
-        TimeSpan datePassed = startDate - DateTime.Now; 
-        double totalCost = (kmReturned - kmRented) *costKm + datePassed.Days*costDay+costDay;
-        return totalCost;
+            u.update = 1;
+            u.FetchingData = true;
+            await Task.Delay(2000);
+            u.FetchingData = false;
+        }
+        else { u.NullCheck = true; }
     }
-    int FindCar(string targetRegNo)
-    {
-        int index = _data.GetVehicles().FindIndex(car => car.RegNo == targetRegNo);
-        return index;
-    }
-    int FindBooking(string targetRegNo)
-    {
-        var matchingBooking = _data.GetBookings()
-        .Select((booking, index) => new { Booking = booking, Index = index })
-        .Where(item => item.Booking.RegNo == targetRegNo)
-        .ToList();
+    public async Task Wait4() => await Task.Delay(3000);
+    public void ReturnVehicle(int vId) => _data.ReturnVehicle(vId, (double)i.InputKmRented);
 
-        int lastIndex = matchingBooking.Last().Index;
-        return lastIndex;
-    }
+    public string[] VehicleTypeNames => _data.VehicleTypeNames;
+    public VehicleTypes GetVehicleType(string name) => _data.GetVehicleType(name);
 }

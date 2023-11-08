@@ -2,6 +2,7 @@
 
 public interface IBooking
 {
+    int Id { get; init; }
     string RegNo { get; init; }
     string Customer { get; init; }
     double KmRented { get; init; }
@@ -9,6 +10,6 @@ public interface IBooking
     double CostKm { get; init; }
     DateOnly DateRented { get; init; }
     DateOnly DateReturned { get; init; }
-    double Cost {  get; set; }
+    double TotalCost {  get; set; }
     bool Status { get; set; }
 }

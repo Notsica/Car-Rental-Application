@@ -1,10 +1,9 @@
 ﻿using Car_Rent.Common.Interfaces;
-using System.Text.RegularExpressions;
-
 namespace Car_Rent.Common.Classes;
 
 public class Booking : IBooking
 {
+    public int Id { get; init; }
     public string RegNo { get; init; }
     public string Customer { get; init; }
     public double KmRented { get; init; }
@@ -12,10 +11,11 @@ public class Booking : IBooking
     public double CostKm { get; init; }
     public DateOnly DateRented { get; init; }
     public DateOnly DateReturned { get; init; }
-    public double Cost { get; set; }
+    public double TotalCost { get; set; }
     public bool Status { get; set; }
-    public Booking(string regNo, string customer, double kmRented, double kmReturned, double costKm, DateOnly dateRented, DateOnly dateReturned, double cost, bool status)
+    public Booking(int id, string regNo, string customer, double kmRented, double kmReturned, double costKm, DateOnly dateRented, DateOnly dateReturned, double totalCost, bool status)
     {
+        Id = id;
         RegNo = regNo;
         Customer = customer;
         KmRented = kmRented;
@@ -23,12 +23,11 @@ public class Booking : IBooking
         CostKm = costKm; 
         DateRented = dateRented;
         DateReturned = dateReturned;
-        Cost = cost;
+        TotalCost = totalCost;
         Status =status;
     }
-    public void CalcCost(IVehicle vehicle, int days)
+    public void CalcCost(Vehicle vehicle, int days)
     {
-        Cost = days * vehicle.CostDay + KmReturned * vehicle.CostKm;
-        
+        TotalCost = days * vehicle.CostDay + (KmReturned-KmRented) * vehicle.CostKm;
     }
 }

@@ -1,6 +1,6 @@
 ﻿namespace Car_Rent.Common.Interfaces;
 
-public interface IVehicle
+public interface IVehicle1
 {
     string RegNo { get; init; }
     string Make { get; init; }
