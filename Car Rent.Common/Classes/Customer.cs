@@ -8,6 +8,11 @@ public class Customer : IPerson
     public string LastName { get; init; }
     public int Id { get; init; }
 
-    public Customer(string sSN, string firstName, string lastName, int uID) => 
-        (SSN, FirstName, LastName, Id) = (sSN, firstName, lastName, uID);
+    public Customer(string sSN, string firstName, string lastName, int id)
+    {
+        SSN = sSN;
+        FirstName = firstName;
+        LastName = lastName;
+        Id = id;
+    }
 }

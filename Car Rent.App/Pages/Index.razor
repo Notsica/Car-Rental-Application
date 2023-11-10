@@ -1,5 +1,6 @@
 ﻿@page "/"
 @using Business.Classes;
+@using Car_Rent.Common.Classes;
 @inject BookingProcessor b;
 
 <PageTitle>Rent Cars</PageTitle>
@@ -8,7 +9,7 @@
 @if (b.u.NullCheck == true)
 {
     <div style="width:50%" class="alert alert-danger" role="alert">
-        Please input a value first
+        Please input a valid value first
     </div>
     b.u.NullCheck = false;
 }
@@ -84,7 +85,7 @@
                 <td> <div class="badge bg-warning text-wrap">Processing</div> </td>
             }
         </tr>
-        @foreach (var car in b.GetVehicles())
+        @foreach (var car in b.GetVehiclesy())
         {
             <tr>
                 <th scope="row">@car.RegNo</th>
@@ -101,14 +102,14 @@
                             {
                                 <select class="form-select" @bind="b.i.PersonSelect">
                                     <option value="0">Customers...</option>
-                                    @foreach (var person in b.GetPersons())
+                                    @foreach (var person in b.GetPersonsy())
                                     {
                                         <option value="@(person.Id)">
                                             @($"{person.FirstName} {person.LastName}({person.SSN})")
                                         </option>
                                     }
                                 </select>
-                                <button class="btn btn-outline-primary" type="button" @onclick="async () => b.RentVehicle(car)">Rent</button>
+                                <button class="btn btn-outline-primary" type="button" @onclick="async () => await b.RentVehicle(car)">Rent</button>
                             }
                             else
                             {
@@ -168,7 +169,7 @@
         </tr>
     </thead>
     <tbody>
-        @foreach (var booking in b.GetBookings())
+        @foreach (var booking in b.GetBookingsy())
         {
             <tr>
             @if(booking.Status == true)
@@ -210,12 +211,12 @@
     </thead>
     <tbody>
         <tr>
-            <td><input style="width:100%" placeholder="SSN" @bind="b.i.SSN"></td>
-            <td><input placeholder="First Name" @bind="b.i.FName"></td>
-            <td><input placeholder="Last Name" @bind="b.i.LName"></td>
-            <td><button class="btn btn-outline-success" type="button"  @onclick="() => b.AddPerson()">Add Customer</button></td>
+            <td><input style="width:100%" placeholder="SSN" @bind="b.i.InputSSN"></td>
+            <td><input placeholder="First test" @bind="b.i.InputFName"></td>
+            <td><input placeholder="Last Name" @bind="b.i.InputLName"></td>
+            <td><button class="btn btn-outline-success" type="button" @onclick="() => b.AddPerson()">Add Customer</button></td>
         </tr>
-        @foreach (var customer in b.GetPersons())
+        @foreach (var customer in b.GetPersonsy())
         {
             <tr>
                 <td style="font-weight: bold;">@customer.SSN</td>
@@ -226,12 +227,3 @@
         }
     </tbody>
 </table>
-
-@if (b.u.update == 1)
-{
-    Update();
-    async void Update()
-    {
-        await b.Wait4(); b.u.update = 2; StateHasChanged(); ;
-    }
-}

@@ -13,7 +13,8 @@ public class Booking : IBooking
     public DateOnly DateReturned { get; init; }
     public double TotalCost { get; set; }
     public bool Status { get; set; }
-    public Booking(int id, string regNo, string customer, double kmRented, double kmReturned, double costKm, DateOnly dateRented, DateOnly dateReturned, double totalCost, bool status)
+    public Booking(int id, string regNo, string customer, double kmRented, double kmReturned, double costKm, 
+        DateOnly dateRented, DateOnly dateReturned, double totalCost, bool status)
     {
         Id = id;
         RegNo = regNo;

@@ -4,9 +4,10 @@ namespace Car_Rent.Data.Interfaces;
 
 public interface IData
 {
-    List<T> Get<T>(Expression<Func<T, bool>>? expression = null);
-    T? Single<T>(Expression<Func<T, bool>>? expression);
-    public void Add<T>(T item);
+    public List<T> Get<T>(Expression<Func<T, bool>>? expression = null) where T : class;
+    public T Single<T>(Expression<Func<T, bool>>? expression = null) where T : class;
+    public void Add<T>(T item) where T : class;
+
     int NextVehicleId { get; }
     int NextPersonId { get; }
     int NextBookingId { get; }

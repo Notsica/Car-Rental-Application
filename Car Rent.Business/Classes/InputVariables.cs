@@ -3,8 +3,8 @@
 public class InputVariables
 {
     #region Vehicle Inputs
-    public string InputRegNo { get; set; }
-    public string InputMake { get; set; }
+    public string? InputRegNo { get; set; }
+    public string? InputMake { get; set; }
     public int? InputOdometer { get; set; }
     public int? InputCostKm { get; set; }
     public string? InputType { get; set; }
@@ -13,9 +13,9 @@ public class InputVariables
     #endregion
 
     #region Customer Inputs
-    public string? SSN { get; set; }
-    public string? FName {get; set; }
-    public string? LName { get; set; }
+    public string? InputSSN { get; set; }
+    public string? InputFName {get; set; }
+    public string? InputLName { get; set; }
     #endregion
 }
 

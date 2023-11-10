@@ -4,5 +4,4 @@ public class UpdateVariables
 {
     public bool FetchingData { get; set; } = false;
     public bool NullCheck { get; set; } = false;
-    public int update = 0;
 }
