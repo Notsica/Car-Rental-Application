@@ -1,4 +1,4 @@
 # Car Rent.App
 
-Inlämning för G delen av inlämningsuppgiften. Vill gärna få kritik på det jag har gjort fel och det jag kan förbättra på. 
+Inlämning för VG delen av inlämningsuppgiften. Kursen är nu slut, glad att ha haft dig som lärare. 
 Mvh, Sekerie Ahmed. 
